@@ -1,10 +1,14 @@
 import os
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
+from settings import DB_NAME, DB_USER, DB_PASSWORD
 import json
 
-database_name = "trivia"
-database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+database_name = 'trivia'
+database_user = DB_USER
+database_password = DB_PASSWORD
+#database_path = "postgres://{}/{}".format('postgres', '1408','localhost:5432', database_name)
+database_path = 'postgresql://{}:{}@{}/{}'.format('postgres', '1408', 'localhost:5432', database_name)
 
 db = SQLAlchemy()
 
@@ -17,7 +21,9 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+    with app.app_context(): 
+      db.create_all()
+    return db
 
 '''
 Question
