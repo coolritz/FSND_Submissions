@@ -3,7 +3,7 @@ import $ from 'jquery';
 
 import '../stylesheets/QuizView.css';
 
-const questionsPerPlay = 3;
+const questionsPerPlay = 5;
 
 class QuizView extends Component {
   constructor(props){
@@ -43,7 +43,9 @@ class QuizView extends Component {
 
   getNextQuestion = () => {
     const previousQuestions = [...this.state.previousQuestions]
-    if(this.state.currentQuestion.id) { previousQuestions.push(this.state.currentQuestion.id) }
+    if (this.state.currentQuestion.id) { 
+      previousQuestions.push(this.state.currentQuestion.id); 
+    }
 
     $.ajax({
       url: '/quizzes', //TODO: update request URL
@@ -65,13 +67,15 @@ class QuizView extends Component {
           currentQuestion: result.question,
           guess: '',
           forceEnd: result.question ? false : true
-        })
+        });
+        return;
       },
       error: (error) => {
         alert('Unable to load question. Please try your request again')
-      }
-    })
-  }
+        return;
+      },
+    });
+  };
 
   submitGuess = (event) => {
     event.preventDefault();
@@ -80,6 +84,7 @@ class QuizView extends Component {
     this.setState({
       numCorrect: !evaluate ? this.state.numCorrect : this.state.numCorrect + 1,
       showAnswer: true,
+      showScore: this.state.numCorrect,
     })
   }
 
@@ -140,16 +145,16 @@ class QuizView extends Component {
         <div className="quiz-question">{this.state.currentQuestion.question}</div>
         <div className={`${evaluate ? 'correct' : 'wrong'}`}>{evaluate ? "You were correct!" : "You were incorrect"}</div>
         <div className="quiz-answer">{this.state.currentQuestion.answer}</div>
-        <div className="next-question button" onClick={this.getNextQuestion}> Next Question </div>
+        <div className="next-question button" onClick={this.getNextQuestion}> {' '} Next Question{' '} </div>
       </div>
     )
   }
 
   renderPlay(){
     return this.state.previousQuestions.length === questionsPerPlay || this.state.forceEnd
-      ? this.renderFinalScore()
+      ? (this.renderFinalScore())
       : this.state.showAnswer
-        ? this.renderCorrectAnswer()
+        ? (this.renderCorrectAnswer())
         : (
           <div className="quiz-play-holder">
             <div className="quiz-question">{this.state.currentQuestion.question}</div>
